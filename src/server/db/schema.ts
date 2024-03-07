@@ -1,15 +1,17 @@
 import { relations, sql } from "drizzle-orm";
 import {
+  boolean,
   index,
   integer,
   pgTableCreator,
   primaryKey,
-  serial,
   text,
   timestamp,
+  uniqueIndex,
   varchar,
 } from "drizzle-orm/pg-core";
 import { type AdapterAccount } from "next-auth/adapters";
+import { nanoid } from "nanoid";
 
 /**
  * This is an example of how to use the multi-project schema feature of Drizzle ORM. Use the same
@@ -17,26 +19,32 @@ import { type AdapterAccount } from "next-auth/adapters";
  *
  * @see https://orm.drizzle.team/docs/goodies#multi-project-schema
  */
-export const createTable = pgTableCreator((name) => `url_shortner_demo_${name}`);
-
-export const posts = createTable(
-  "post",
-  {
-    id: serial("id").primaryKey(),
-    name: varchar("name", { length: 256 }),
-    createdById: varchar("createdById", { length: 255 })
-      .notNull()
-      .references(() => users.id),
-    createdAt: timestamp("created_at")
-      .default(sql`CURRENT_TIMESTAMP`)
-      .notNull(),
-    updatedAt: timestamp("updatedAt"),
-  },
-  (example) => ({
-    createdByIdIdx: index("createdById_idx").on(example.createdById),
-    nameIndex: index("name_idx").on(example.name),
-  })
+export const createTable = pgTableCreator(
+  (name) => `url_shortner_demo_${name}`,
 );
+
+export const urls = createTable(
+  "url",
+  {
+    id: varchar("id", { length: 255 }).primaryKey().$defaultFn(nanoid),
+    tinyurl: varchar("tinyurl", { length: 255 }).$defaultFn(nanoid),
+    forwardedTo: varchar("fowarded_to", { length: 255 }).notNull(),
+    isAuthRequired: boolean("auth_required").default(false),
+    isNotificationRequired: boolean("notification_required").default(false),
+    startTime: timestamp("start_time").notNull().defaultNow(),
+    endTime: timestamp("end_time").notNull(),
+    userId: varchar("user_id", { length: 255 }).references(() => users.id, {
+      onDelete: "cascade",
+    }),
+  },
+  (table) => ({
+    tinyurlIdx: uniqueIndex("tinyurl_idx").on(table.tinyurl),
+  }),
+);
+
+export const urlsRelation = relations(urls, ({ one }) => ({
+  user: one(users, { fields: [urls.userId], references: [users.id] }),
+}));
 
 export const users = createTable("user", {
   id: varchar("id", { length: 255 }).notNull().primaryKey(),
@@ -50,6 +58,7 @@ export const users = createTable("user", {
 
 export const usersRelations = relations(users, ({ many }) => ({
   accounts: many(accounts),
+  urls: many(urls),
 }));
 
 export const accounts = createTable(
@@ -76,7 +85,7 @@ export const accounts = createTable(
       columns: [account.provider, account.providerAccountId],
     }),
     userIdIdx: index("account_userId_idx").on(account.userId),
-  })
+  }),
 );
 
 export const accountsRelations = relations(accounts, ({ one }) => ({
@@ -96,7 +105,7 @@ export const sessions = createTable(
   },
   (session) => ({
     userIdIdx: index("session_userId_idx").on(session.userId),
-  })
+  }),
 );
 
 export const sessionsRelations = relations(sessions, ({ one }) => ({
@@ -112,5 +121,5 @@ export const verificationTokens = createTable(
   },
   (vt) => ({
     compoundKey: primaryKey({ columns: [vt.identifier, vt.token] }),
-  })
+  }),
 );
