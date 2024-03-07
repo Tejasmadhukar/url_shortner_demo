@@ -10,8 +10,8 @@ import {
   uniqueIndex,
   varchar,
 } from "drizzle-orm/pg-core";
-import { type AdapterAccount } from "next-auth/adapters";
 import { nanoid } from "nanoid";
+import { type AdapterAccount } from "next-auth/adapters";
 
 /**
  * This is an example of how to use the multi-project schema feature of Drizzle ORM. Use the same
@@ -27,15 +27,21 @@ export const urls = createTable(
   "url",
   {
     id: varchar("id", { length: 255 }).primaryKey().$defaultFn(nanoid),
-    tinyurl: varchar("tinyurl", { length: 255 }).$defaultFn(nanoid),
+    tinyurl: varchar("tinyurl", { length: 255 })
+      .notNull()
+      .$defaultFn(() => nanoid(5)),
     forwardedTo: varchar("fowarded_to", { length: 255 }).notNull(),
-    isAuthRequired: boolean("auth_required").default(false),
-    isNotificationRequired: boolean("notification_required").default(false),
+    isAuthRequired: boolean("auth_required").notNull().default(false),
+    isNotificationRequired: boolean("notification_required")
+      .notNull()
+      .default(false),
     startTime: timestamp("start_time").notNull().defaultNow(),
     endTime: timestamp("end_time").notNull(),
-    userId: varchar("user_id", { length: 255 }).references(() => users.id, {
-      onDelete: "cascade",
-    }),
+    userId: varchar("user_id", { length: 255 })
+      .notNull()
+      .references(() => users.id, {
+        onDelete: "cascade",
+      }),
   },
   (table) => ({
     tinyurlIdx: uniqueIndex("tinyurl_idx").on(table.tinyurl),
