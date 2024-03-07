@@ -1,4 +1,5 @@
-import { permanentRedirect } from "next/navigation";
+import { permanentRedirect, redirect } from "next/navigation";
+import { getServerAuthSession } from "~/server/auth";
 import { db } from "~/server/db";
 
 export async function GET(request: Request) {
@@ -16,6 +17,13 @@ export async function GET(request: Request) {
 
     if (!url) {
       return new Response("This tinyurl was not found in database 400");
+    }
+
+    if (url.isAuthRequired) {
+      const session = await getServerAuthSession();
+      if (!session) {
+        redirect("/api/auth/signin");
+      }
     }
 
     permanentRedirect(url.forwardedTo);

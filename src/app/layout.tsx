@@ -10,7 +10,7 @@ const inter = Inter({
 });
 
 export const metadata = {
-  title: "Url shortner demo",
+  title: "Url Shortner Demo",
   description: "A url shortner demo app created for ccextractor.",
   icons: [{ rel: "icon", url: "/favicon.ico" }],
 };
