@@ -44,9 +44,9 @@ export const appRouter = createTRPCRouter({
       z.object({
         isAuthRequired: z.boolean(),
         isNotificationRequired: z.boolean(),
-        startTime: z.date().optional(),
+        startTime: z.date(),
         endTime: z.date(),
-        actual_url: z.string(),
+        actual_url: z.string().url(),
       }),
     )
     .mutation(async ({ input, ctx }) => {
@@ -58,7 +58,7 @@ export const appRouter = createTRPCRouter({
           userId: ctx.session.user.id,
           isAuthRequired: input.isAuthRequired,
           isNotificationRequired: input.isNotificationRequired,
-          startTime: input?.startTime ?? new Date(),
+          startTime: input.startTime,
         })
         .returning();
       if (!result[0]?.tinyurl) {

@@ -29,6 +29,7 @@ export const urls = createTable(
     id: varchar("id", { length: 255 }).primaryKey().$defaultFn(nanoid),
     tinyurl: varchar("tinyurl", { length: 255 })
       .notNull()
+      .unique()
       .$defaultFn(() => nanoid(5)),
     forwardedTo: varchar("fowarded_to", { length: 255 }).notNull(),
     isAuthRequired: boolean("auth_required").notNull().default(false),

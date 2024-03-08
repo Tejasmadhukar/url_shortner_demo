@@ -1,14 +1,15 @@
 import Link from "next/link";
 import { getServerAuthSession } from "~/server/auth";
 import { api } from "~/trpc/server";
+import { CreateForm } from "./_sections/create_modal";
 
 export default async function Home() {
   const session = await getServerAuthSession();
   return (
-    <main className="flex min-h-screen flex-col items-center justify-center bg-gradient-to-b from-slate-500 to-slate-900 text-white">
+    <main className="flex min-h-screen flex-col items-center justify-center bg-gradient-to-b from-slate-800 to-slate-950 text-white">
       <div className="container flex flex-col items-center justify-center gap-12 px-4 py-16 ">
         <h1 className="text-5xl font-extrabold tracking-tight sm:text-[5rem]">
-          URL <span className="text-stone-200">Shortner</span> Demo
+          URL <span className="text-">Shortner</span> Demo
         </h1>
         <div className="flex flex-col items-center gap-2">
           <div className="flex flex-col items-center justify-center gap-4">
@@ -53,5 +54,12 @@ async function CreateUrl() {
   const session = await getServerAuthSession();
   if (!session?.user) return null;
 
-  return <h1>Implement this !!!</h1>;
+  return (
+    <>
+      <h1 className="text-center text-3xl font-bold text-white">
+        Create a tiny url
+      </h1>
+      <CreateForm />
+    </>
+  );
 }
