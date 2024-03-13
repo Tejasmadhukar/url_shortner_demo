@@ -3,7 +3,6 @@ import { getServerAuthSession } from "~/server/auth";
 import { api } from "~/trpc/server";
 import { CreateForm } from "./_sections/create_modal";
 import { Suspense } from "react";
-import { getBaseUrl } from "~/trpc/shared";
 import { Button } from "~/components/ui/button";
 import { revalidatePath } from "next/cache";
 
