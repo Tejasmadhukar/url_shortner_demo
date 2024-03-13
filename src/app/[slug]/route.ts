@@ -41,7 +41,12 @@ export async function GET(request: Request) {
       return redirect("/api/auth/signin");
     }
     if (url.isNotificationRequired) {
-      await NotifyOnClick(url.userId, session.user.email, new Date());
+      await NotifyOnClick(
+        url.userId,
+        session.user.email,
+        new Date(),
+        url.forwardedTo,
+      );
     }
   }
 
