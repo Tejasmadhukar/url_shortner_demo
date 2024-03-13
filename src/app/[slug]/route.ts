@@ -1,4 +1,5 @@
 import { permanentRedirect, redirect } from "next/navigation";
+import { NextResponse } from "next/server";
 import { getServerAuthSession } from "~/server/auth";
 import { db } from "~/server/db";
 
@@ -7,27 +8,29 @@ export async function GET(request: Request) {
   const slug = urlParts[urlParts.length - 1];
 
   if (!slug) {
-    return new Response("Your tinyurl is not valid. 404");
+    return NextResponse.json(
+      { message: "This tinyurl is not valid" },
+      { status: 400 },
+    );
   }
 
-  try {
-    const url = await db.query.urls.findFirst({
-      where: (url, { eq }) => eq(url.tinyurl, slug),
-    });
+  const url = await db.query.urls.findFirst({
+    where: (url, { eq }) => eq(url.tinyurl, slug),
+  });
 
-    if (!url) {
-      return new Response("This tinyurl was not found in database 400");
-    }
-
-    if (url.isAuthRequired) {
-      const session = await getServerAuthSession();
-      if (!session) {
-        redirect("/api/auth/signin");
-      }
-    }
-
-    permanentRedirect(url.forwardedTo);
-  } catch (error) {
-    return new Response("Error could not connect to databse");
+  if (!url) {
+    return NextResponse.json(
+      { message: "This tinyurl was not found" },
+      { status: 404 },
+    );
   }
+
+  if (url.isAuthRequired) {
+    const session = await getServerAuthSession();
+    if (!session) {
+      return redirect("/api/auth/signin");
+    }
+  }
+
+  return permanentRedirect(url.forwardedTo);
 }
