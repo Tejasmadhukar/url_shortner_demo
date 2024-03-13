@@ -2,6 +2,10 @@ import Link from "next/link";
 import { getServerAuthSession } from "~/server/auth";
 import { api } from "~/trpc/server";
 import { CreateForm } from "./_sections/create_modal";
+import { Suspense } from "react";
+import { getBaseUrl } from "~/trpc/shared";
+import { Button } from "~/components/ui/button";
+import { revalidatePath } from "next/cache";
 
 export default async function Home() {
   const session = await getServerAuthSession();
@@ -14,7 +18,7 @@ export default async function Home() {
         <div className="flex flex-col items-center gap-2">
           <div className="flex flex-col items-center justify-center gap-4">
             <p className="text-center text-2xl text-white">
-              {session && <span>Logged in as {session.user?.name}</span>}
+              {session && <span>Logged in as {session.user.email}</span>}
             </p>
             <Link
               href={session ? "/api/auth/signout" : "/api/auth/signin"}
@@ -24,7 +28,9 @@ export default async function Home() {
             </Link>
           </div>
         </div>
-        <ShowAllUrls />
+        <Suspense fallback={<p>Loading your urls....</p>}>
+          <ShowAllUrls />
+        </Suspense>
         <CreateUrl />
       </div>
     </main>
@@ -36,18 +42,50 @@ async function ShowAllUrls() {
   if (!session?.user) return null;
 
   const all_urls = await api.getall_tinyurls.query();
+  console.log(all_urls);
 
-  if (!all_urls) return <h1>You have no urls right now</h1>;
+  if (all_urls.length == 0 || !all_urls) return <h1>You have no tinyurls</h1>;
 
-  all_urls.map((val) => {
-    return (
-      <>
-        <h1>
-          `Your tiny url - ${val.tinyurl} is mapped to ${val.forwardedTo}`
-        </h1>
-      </>
-    );
-  });
+  return (
+    <>
+      <h1 className="text-2xl font-bold text-white">Your urls</h1>
+      {all_urls.map((url) => {
+        const tiny_url = getBaseUrl() + "/" + url.tinyurl;
+        const DeleteUrlAction = async () => {
+          "use server";
+          await api.delete_tinyUrl.mutate({ urlId: url.id });
+          revalidatePath("/");
+        };
+        return (
+          <div key={url.id} className="space-y-1">
+            Your tiny url{" "}
+            <Link href={tiny_url} target="_blank" className="text-blue-400">
+              {tiny_url}
+            </Link>{" "}
+            redirects to this{" "}
+            <Link
+              href={url.forwardedTo}
+              target="_blank"
+              className="text-blue-500"
+            >
+              Link
+            </Link>
+            {url.isNotificationRequired && <p>Notification are enabled</p>}
+            {url.isAuthRequired && <p>Auth is required</p>}
+            <form>
+              <Button
+                variant="destructive"
+                formAction={DeleteUrlAction}
+                className="ml-2"
+              >
+                Delete
+              </Button>
+            </form>
+          </div>
+        );
+      })}
+    </>
+  );
 }
 
 async function CreateUrl() {
