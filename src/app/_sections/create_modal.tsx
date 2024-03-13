@@ -1,8 +1,7 @@
 "use client";
-
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
-import { z } from "zod";
+import { type z } from "zod";
 import { Button } from "~/components/ui/button";
 import {
   Form,
@@ -15,7 +14,6 @@ import {
 } from "~/components/ui/form";
 import { Input } from "~/components/ui/input";
 import { format } from "date-fns";
-import { toast } from "~/components/ui/use-toast";
 import { Switch } from "~/components/ui/switch";
 import {
   Popover,
@@ -25,41 +23,23 @@ import {
 import { CalendarIcon } from "@radix-ui/react-icons";
 import { Calendar } from "~/components/ui/calendar";
 import { cn } from "~/lib/utils";
+import { create_tinyurl_model } from "~/server/api/models";
+import { createUrlAction } from "./submit_action";
 
-const FormSchema = z.object({
-  isAuthRequired: z.boolean().default(false),
-  isNotificationRequired: z.boolean().default(false),
-  startTime: z.date().default(new Date()),
-  endTime: z.date(),
-  actual_url: z.string().url({
-    message: "Must be a valid url",
-  }),
-});
+const FormSchema = create_tinyurl_model;
 
 export function CreateForm() {
   const form = useForm<z.infer<typeof FormSchema>>({
     resolver: zodResolver(FormSchema),
-    defaultValues: {
-      endTime: new Date(new Date().getTime() + 24 * 60 * 60 * 1000),
-      actual_url: "",
-    },
   });
 
-  function onSubmit(data: z.infer<typeof FormSchema>) {
-    // console.log(data);
-    toast({
-      title: "You submitted the following values:",
-      description: (
-        <pre className="mt-2 w-[340px] rounded-md bg-slate-950 p-4">
-          <code className="text-white">{JSON.stringify(data, null, 2)}</code>
-        </pre>
-      ),
-    });
+  async function onSubmit(data: z.infer<typeof FormSchema>) {
+    await createUrlAction(data);
   }
 
   return (
     <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)} className="w-2/3 space-y-6">
+      <form onSubmit={form.handleSubmit(onSubmit)} className="w-1/3 space-y-6">
         <FormField
           control={form.control}
           name="actual_url"
@@ -68,9 +48,6 @@ export function CreateForm() {
               <FormControl>
                 <Input placeholder="put your url here" {...field} />
               </FormControl>
-              <FormDescription>
-                url you want to create a tiny url for
-              </FormDescription>
               <FormMessage />
             </FormItem>
           )}
@@ -92,6 +69,7 @@ export function CreateForm() {
                   onCheckedChange={field.onChange}
                 />
               </FormControl>
+              <FormMessage />
             </FormItem>
           )}
         />
@@ -113,31 +91,32 @@ export function CreateForm() {
                   onCheckedChange={field.onChange}
                 />
               </FormControl>
+              <FormMessage />
             </FormItem>
           )}
         />
         <FormField
           control={form.control}
-          name="endTime"
+          name="startTime"
           render={({ field }) => (
             <FormItem className="flex flex-col">
-              <FormLabel>End Date</FormLabel>
+              <FormLabel>Start Date (Optional, default today)</FormLabel>
               <Popover>
                 <PopoverTrigger asChild>
                   <FormControl>
                     <Button
                       variant={"outline"}
                       className={cn(
-                        "w-[240px] pl-3 text-left font-normal",
+                        "w-[240px] bg-transparent pl-3 text-left font-normal",
                         !field.value && "text-muted-foreground",
                       )}
                     >
                       {field.value ? (
                         format(field.value, "PPP")
                       ) : (
-                        <span>Pick a date</span>
+                        <span className="text-white">Pick a date</span>
                       )}
-                      <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
+                      <CalendarIcon className="ml-auto h-4 w-4 text-white opacity-50" />
                     </Button>
                   </FormControl>
                 </PopoverTrigger>
@@ -146,7 +125,60 @@ export function CreateForm() {
                     mode="single"
                     selected={field.value}
                     onSelect={field.onChange}
-                    disabled={(date) => date < new Date()}
+                    disabled={(date) =>
+                      date <
+                      new Date(
+                        new Date().setDate(new Date().getDate() - 1),
+                      ) ||
+                      date >
+                      new Date(new Date().setMonth(new Date().getMonth() + 1))
+                    }
+                    initialFocus
+                  />
+                </PopoverContent>
+              </Popover>
+              <FormDescription>
+                Enter the date from which you want your url to be valid.
+              </FormDescription>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+        <FormField
+          control={form.control}
+          name="endTime"
+          render={({ field }) => (
+            <FormItem className="flex flex-col">
+              <FormLabel>End Date (Optional, default next day)</FormLabel>
+              <Popover>
+                <PopoverTrigger asChild>
+                  <FormControl>
+                    <Button
+                      variant={"outline"}
+                      className={cn(
+                        "w-[240px] bg-transparent pl-3 text-left font-normal",
+                        !field.value && "text-muted-foreground",
+                      )}
+                    >
+                      {field.value ? (
+                        format(field.value, "PPP")
+                      ) : (
+                        <span className="text-white">Pick a date</span>
+                      )}
+                      <CalendarIcon className="ml-auto h-4 w-4 text-white opacity-50" />
+                    </Button>
+                  </FormControl>
+                </PopoverTrigger>
+                <PopoverContent className="w-auto p-0" align="start">
+                  <Calendar
+                    mode="single"
+                    selected={field.value}
+                    onSelect={field.onChange}
+                    disabled={(date) =>
+                      date < new Date() ||
+                      date >
+                      new Date(new Date().setMonth(new Date().getMonth() + 1))
+                    }
                     initialFocus
                   />
                 </PopoverContent>

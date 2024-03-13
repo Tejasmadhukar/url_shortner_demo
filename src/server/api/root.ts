@@ -1,8 +1,9 @@
+import { TRPCError } from "@trpc/server";
+import { eq } from "drizzle-orm";
 import { z } from "zod";
 import { createTRPCRouter, protectedProcedure } from "~/server/api/trpc";
 import { urls } from "../db/schema";
-import { TRPCError } from "@trpc/server";
-import { eq } from "drizzle-orm";
+import { create_tinyurl_model } from "./models";
 
 /**
  * This is the primary router for your server.
@@ -40,15 +41,7 @@ export const appRouter = createTRPCRouter({
       }
     }),
   create_tinyurl: protectedProcedure
-    .input(
-      z.object({
-        isAuthRequired: z.boolean(),
-        isNotificationRequired: z.boolean(),
-        startTime: z.date(),
-        endTime: z.date(),
-        actual_url: z.string().url(),
-      }),
-    )
+    .input(create_tinyurl_model)
     .mutation(async ({ input, ctx }) => {
       const result = await ctx.db
         .insert(urls)
