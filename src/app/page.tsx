@@ -57,19 +57,24 @@ async function ShowAllUrls() {
           revalidatePath("/");
         };
         return (
-          <div key={url.id} className="space-y-1">
-            Your tiny url{" "}
-            <Link href={tiny_url} target="_blank" className="text-blue-400">
-              {tiny_url}
-            </Link>{" "}
-            redirects to this{" "}
-            <Link
-              href={url.forwardedTo}
-              target="_blank"
-              className="text-blue-500"
-            >
-              Link
-            </Link>
+          <div
+            key={url.id}
+            className="flex flex-col items-center justify-center space-y-1"
+          >
+            <p>
+              Your tiny url{" "}
+              <Link href={tiny_url} target="_blank" className="text-blue-400">
+                {tiny_url}
+              </Link>{" "}
+              redirects to this{" "}
+              <Link
+                href={url.forwardedTo}
+                target="_blank"
+                className="text-blue-500"
+              >
+                Link
+              </Link>
+            </p>{" "}
             {url.isNotificationRequired && <p>Notification are enabled</p>}
             {url.isAuthRequired && <p>Auth is required</p>}
             <form>
