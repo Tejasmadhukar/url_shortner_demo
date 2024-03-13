@@ -50,7 +50,9 @@ async function ShowAllUrls() {
     <>
       <h1 className="text-2xl font-bold text-white">Your urls</h1>
       {all_urls.map((url) => {
-        const tiny_url = getBaseUrl() + "/" + url.tinyurl;
+        const tiny_url =
+          "https://url-shortner-demo.vercel.app" + "/" + url.tinyurl;
+
         const DeleteUrlAction = async () => {
           "use server";
           await api.delete_tinyUrl.mutate({ urlId: url.id });
