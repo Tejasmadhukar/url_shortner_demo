@@ -112,6 +112,9 @@ devDependencies:
   "@types/node":
     specifier: ^20.11.20
     version: 20.11.20
+  "@types/nodemailer":
+    specifier: ^6.4.14
+    version: 6.4.14
   "@types/react":
     specifier: ^18.2.57
     version: 18.2.57
@@ -1922,6 +1925,15 @@ packages:
       }
     dependencies:
       undici-types: 5.26.5
+    dev: true
+
+  /@types/nodemailer@6.4.14:
+    resolution:
+      {
+        integrity: sha512-fUWthHO9k9DSdPCSPRqcu6TWhYyxTBg382vlNIttSe9M7XfsT06y0f24KHXtbnijPGGRIcVvdKHTNikOI6qiHA==,
+      }
+    dependencies:
+      "@types/node": 20.11.20
     dev: true
 
   /@types/prop-types@15.7.11:
