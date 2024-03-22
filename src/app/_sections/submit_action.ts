@@ -7,6 +7,7 @@ import { api } from "~/trpc/server";
 export async function createUrlAction(
   data: z.infer<typeof create_tinyurl_model>,
 ) {
-  await api.create_tinyurl.mutate(data);
+  const tinyurl = await api.create_tinyurl.mutate(data);
   revalidatePath("/");
+  return tinyurl;
 }

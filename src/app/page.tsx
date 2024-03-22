@@ -41,7 +41,6 @@ async function ShowAllUrls() {
   if (!session?.user) return null;
 
   const all_urls = await api.getall_tinyurls.query();
-  console.log(all_urls);
 
   if (all_urls.length == 0 || !all_urls) return <h1>You have no tinyurls</h1>;
 
