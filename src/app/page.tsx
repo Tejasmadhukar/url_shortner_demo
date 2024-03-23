@@ -5,6 +5,7 @@ import { CreateForm } from "./_sections/create_modal";
 import { Suspense } from "react";
 import { Button } from "~/components/ui/button";
 import { revalidatePath } from "next/cache";
+import { getActualTinyBaseUrl } from "~/trpc/shared";
 
 export default async function Home() {
   const session = await getServerAuthSession();
@@ -48,8 +49,7 @@ async function ShowAllUrls() {
     <>
       <h1 className="text-2xl font-bold text-white">Your urls</h1>
       {all_urls.map((url) => {
-        const tiny_url =
-          "https://url-shortner-demo.vercel.app" + "/" + url.tinyurl;
+        const tiny_url = `${getActualTinyBaseUrl()}/redirect/${url.tinyurl}`;
 
         const DeleteUrlAction = async () => {
           "use server";

@@ -31,11 +31,12 @@ import {
 } from "~/components/ui/popover";
 import { CalendarIcon } from "@radix-ui/react-icons";
 import { Calendar } from "~/components/ui/calendar";
+import { Label } from "~/components/ui/label";
 import { cn } from "~/lib/utils";
 import { create_tinyurl_model } from "~/server/api/models";
 import { createUrlAction } from "./submit_action";
 import { useState } from "react";
-
+import { getActualTinyBaseUrl } from "~/trpc/shared";
 const FormSchema = create_tinyurl_model;
 
 export function CreateForm() {
@@ -44,11 +45,12 @@ export function CreateForm() {
   });
 
   const [loading, setloading] = useState(false);
-  const [_resultUrl, setresultUrl] = useState(""); // eslint-disable-line
+  const [resultUrl, setresultUrl] = useState("");
 
   async function onSubmit(data: z.infer<typeof FormSchema>) {
     setloading(true);
-    const tinyurl = await createUrlAction(data);
+    const tinyurlid = await createUrlAction(data);
+    const tinyurl = `${getActualTinyBaseUrl()}/redirect/${tinyurlid}`;
     setresultUrl(tinyurl);
     setloading(false);
   }
@@ -66,9 +68,19 @@ export function CreateForm() {
             where you can manage it.
           </DialogDescription>
         </DialogHeader>
-        <Form {...form}>
-          {loading && <h1>Making url</h1>}
-          {!loading && (
+        {resultUrl.length !== 0 && (
+          <div className="flex items-center space-x-2">
+            <div className="grid flex-1 gap-2">
+              <Label htmlFor="link" className="sr-only">
+                Link
+              </Label>
+              <Input id="link" defaultValue={resultUrl} readOnly />
+            </div>
+          </div>
+        )}
+        {loading && <h1>Making url...</h1>}
+        {!loading && resultUrl.length == 0 && (
+          <Form {...form}>
             <form
               onSubmit={form.handleSubmit(onSubmit)}
               className="flex flex-col space-y-6"
@@ -234,8 +246,15 @@ export function CreateForm() {
                 </Button>
               </DialogFooter>
             </form>
-          )}
-        </Form>
+          </Form>
+        )}
+        {resultUrl.length !== 0 && (
+          <DialogFooter className="items-center justify-center">
+            <Button variant="secondary" onClick={() => setresultUrl("")}>
+              Make a new Url
+            </Button>
+          </DialogFooter>
+        )}
       </DialogContent>
     </Dialog>
   );
