@@ -1,6 +1,5 @@
 import {
   Body,
-  Button,
   Container,
   Head,
   Html,
@@ -24,7 +23,7 @@ export const NotificationEmail = ({
       <Container style={container}>
         <Section style={box}>
           <Text style={paragraph}>
-            {email} received your url ${url} on ${new Date().toUTCString()}
+            {email} received your url {url} on {new Date().toUTCString()}
           </Text>
         </Section>
       </Container>

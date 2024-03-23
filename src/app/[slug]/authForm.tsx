@@ -39,13 +39,13 @@ export function UrlOnMail({ tinyurl }: { tinyurl: string }) {
 
   return (
     <>
-      {done && <h1>check your mail</h1>}
-      {loading && !done && <h1>Loading message</h1>}
+      {done && <h1>URL sent successfully, check your mail !</h1>}
+      {loading && !done && <h1>Sending URL to your mail...</h1>}
       {!done && !loading && (
         <Form {...form}>
           <form
             onSubmit={form.handleSubmit(onSubmit)}
-            className="w-2/3 space-y-6"
+            className="w-1/3 space-y-6 "
           >
             <FormField
               control={form.control}
@@ -63,7 +63,9 @@ export function UrlOnMail({ tinyurl }: { tinyurl: string }) {
                 </FormItem>
               )}
             />
-            <Button type="submit">Submit</Button>
+            <Button variant="secondary" type="submit">
+              Submit
+            </Button>
           </form>
         </Form>
       )}

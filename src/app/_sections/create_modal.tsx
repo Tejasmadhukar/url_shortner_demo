@@ -50,7 +50,7 @@ export function CreateForm() {
   async function onSubmit(data: z.infer<typeof FormSchema>) {
     setloading(true);
     const tinyurlid = await createUrlAction(data);
-    const tinyurl = `${getActualTinyBaseUrl()}/redirect/${tinyurlid}`;
+    const tinyurl = `${getActualTinyBaseUrl()}/${tinyurlid}`;
     setresultUrl(tinyurl);
     setloading(false);
   }
