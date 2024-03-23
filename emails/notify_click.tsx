@@ -24,7 +24,7 @@ export const NotificationEmail = ({
       <Container style={container}>
         <Section style={box}>
           <Text style={paragraph}>
-            ${email} opened your url ${url} on ${new Date().toLocaleString()}
+            {email} received your url ${url} on ${new Date().toUTCString()}
           </Text>
         </Section>
       </Container>

@@ -59,7 +59,7 @@ export async function EmailAuthRequiredAction(email: string, tinyurl: string) {
     from: env.EMAIL_FROM,
     to: email,
     subject: "Somebody opened your url",
-    text: `${email} opened your url ${tinyurlEntry.forwardedTo} on ${new Date().toLocaleString()}`,
+    text: `${email} opened your url ${tinyurlEntry.forwardedTo} on ${new Date().toUTCString()}`,
     html: NotificationEmailHtml,
   };
 
