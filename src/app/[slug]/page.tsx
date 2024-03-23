@@ -1,5 +1,6 @@
 import { permanentRedirect } from "next/navigation";
 import { db } from "~/server/db";
+import { UrlOnMail } from "./authForm";
 
 export default async function Redirect({
   params,
@@ -25,5 +26,5 @@ export default async function Redirect({
 
   if (!url.isAuthRequired) return permanentRedirect(url.forwardedTo);
 
-  return <h1>auth and notification UI condition</h1>;
+  return <UrlOnMail tinyurl={tinyurl} />;
 }
