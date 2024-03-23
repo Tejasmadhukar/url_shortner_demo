@@ -49,7 +49,7 @@ async function ShowAllUrls() {
     <>
       <h1 className="text-2xl font-bold text-white">Your urls</h1>
       {all_urls.map((url) => {
-        const tiny_url = `${getActualTinyBaseUrl()}/redirect/${url.tinyurl}`;
+        const tiny_url = `${getActualTinyBaseUrl()}/${url.tinyurl}`;
 
         const DeleteUrlAction = async () => {
           "use server";
