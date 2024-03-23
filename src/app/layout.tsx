@@ -1,5 +1,4 @@
 import "~/styles/globals.css";
-import { Toaster } from "~/components/ui/toaster";
 import { Inter } from "next/font/google";
 import { TRPCReactProvider } from "~/trpc/react";
 import { ThemeProvider } from "./theme-provider";
@@ -33,7 +32,6 @@ export default function RootLayout({
             {children}
           </ThemeProvider>
         </TRPCReactProvider>
-        <Toaster />
       </body>
     </html>
   );
