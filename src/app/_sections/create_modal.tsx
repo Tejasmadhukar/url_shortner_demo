@@ -36,7 +36,7 @@ import { cn } from "~/lib/utils";
 import { create_tinyurl_model } from "~/server/api/models";
 import { createUrlAction } from "./submit_action";
 import { useState } from "react";
-import { getActualTinyBaseUrl } from "~/trpc/shared";
+import { getBaseUrl } from "~/trpc/shared";
 const FormSchema = create_tinyurl_model;
 
 export function CreateForm() {
@@ -50,7 +50,7 @@ export function CreateForm() {
   async function onSubmit(data: z.infer<typeof FormSchema>) {
     setloading(true);
     const tinyurlid = await createUrlAction(data);
-    const tinyurl = `${getActualTinyBaseUrl()}/${tinyurlid}`;
+    const tinyurl = `${getBaseUrl()}/${tinyurlid}`;
     setresultUrl(tinyurl);
     setloading(false);
   }

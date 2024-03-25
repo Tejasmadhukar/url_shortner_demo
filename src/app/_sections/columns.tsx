@@ -4,7 +4,7 @@ import { type UrlType } from "~/server/db/schema";
 import { Checkbox } from "~/components/ui/checkbox";
 import { DataTableColumnHeader } from "./data-table-column-header";
 import Link from "next/link";
-import { getActualTinyBaseUrl } from "~/trpc/shared";
+import { getBaseUrl } from "~/trpc/shared";
 
 export const columns: ColumnDef<UrlType>[] = [
   {
@@ -38,7 +38,7 @@ export const columns: ColumnDef<UrlType>[] = [
       // eslint-disable-next-line
       const tinyurlhash = row.getValue("tinyurl") + "";
       // eslint-disable-next-line
-      const tinyurl = `${getActualTinyBaseUrl()}/${tinyurlhash}`;
+      const tinyurl = `${getBaseUrl()}/${tinyurlhash}`;
       return (
         <Link href={tinyurl} target="_blank">
           {tinyurlhash}
