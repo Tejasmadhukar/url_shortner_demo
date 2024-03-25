@@ -13,6 +13,8 @@ import {
 import { nanoid } from "nanoid";
 import { type AdapterAccount } from "next-auth/adapters";
 
+import { type InferSelectModel } from "drizzle-orm";
+
 /**
  * This is an example of how to use the multi-project schema feature of Drizzle ORM. Use the same
  * database instance for multiple projects.
@@ -48,6 +50,8 @@ export const urls = createTable(
     tinyurlIdx: uniqueIndex("tinyurl_idx").on(table.tinyurl),
   }),
 );
+
+export type UrlType = InferSelectModel<typeof urls>;
 
 export const urlsRelation = relations(urls, ({ one }) => ({
   user: one(users, { fields: [urls.userId], references: [users.id] }),

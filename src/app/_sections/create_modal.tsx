@@ -31,11 +31,12 @@ import {
 } from "~/components/ui/popover";
 import { CalendarIcon } from "@radix-ui/react-icons";
 import { Calendar } from "~/components/ui/calendar";
+import { Label } from "~/components/ui/label";
 import { cn } from "~/lib/utils";
 import { create_tinyurl_model } from "~/server/api/models";
 import { createUrlAction } from "./submit_action";
 import { useState } from "react";
-
+import { getActualTinyBaseUrl } from "~/trpc/shared";
 const FormSchema = create_tinyurl_model;
 
 export function CreateForm() {
@@ -44,11 +45,12 @@ export function CreateForm() {
   });
 
   const [loading, setloading] = useState(false);
-  const [_resultUrl, setresultUrl] = useState(""); // eslint-disable-line
+  const [resultUrl, setresultUrl] = useState("");
 
   async function onSubmit(data: z.infer<typeof FormSchema>) {
     setloading(true);
-    const tinyurl = await createUrlAction(data);
+    const tinyurlid = await createUrlAction(data);
+    const tinyurl = `${getActualTinyBaseUrl()}/${tinyurlid}`;
     setresultUrl(tinyurl);
     setloading(false);
   }
@@ -66,9 +68,19 @@ export function CreateForm() {
             where you can manage it.
           </DialogDescription>
         </DialogHeader>
-        <Form {...form}>
-          {loading && <h1>Making url</h1>}
-          {!loading && (
+        {resultUrl.length !== 0 && (
+          <div className="flex items-center space-x-2">
+            <div className="grid flex-1 gap-2">
+              <Label htmlFor="link" className="sr-only">
+                Link
+              </Label>
+              <Input id="link" defaultValue={resultUrl} readOnly />
+            </div>
+          </div>
+        )}
+        {loading && <h1>Making url...</h1>}
+        {!loading && resultUrl.length == 0 && (
+          <Form {...form}>
             <form
               onSubmit={form.handleSubmit(onSubmit)}
               className="flex flex-col space-y-6"
@@ -148,9 +160,11 @@ export function CreateForm() {
                             {field.value ? (
                               format(field.value, "PPP")
                             ) : (
-                              <span className="text-white">Pick a date</span>
+                              <span className="dark:text-white">
+                                Pick a date
+                              </span>
                             )}
-                            <CalendarIcon className="ml-auto h-4 w-4 text-white opacity-50" />
+                            <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
                           </Button>
                         </FormControl>
                       </PopoverTrigger>
@@ -161,13 +175,13 @@ export function CreateForm() {
                           onSelect={field.onChange}
                           disabled={(date) =>
                             date <
-                            new Date(
-                              new Date().setDate(new Date().getDate() - 1),
-                            ) ||
+                              new Date(
+                                new Date().setDate(new Date().getDate() - 1),
+                              ) ||
                             date >
-                            new Date(
-                              new Date().setMonth(new Date().getMonth() + 1),
-                            )
+                              new Date(
+                                new Date().setMonth(new Date().getMonth() + 1),
+                              )
                           }
                           initialFocus
                         />
@@ -199,9 +213,11 @@ export function CreateForm() {
                             {field.value ? (
                               format(field.value, "PPP")
                             ) : (
-                              <span className="text-white">Pick a date</span>
+                              <span className="dark:text-white">
+                                Pick a date
+                              </span>
                             )}
-                            <CalendarIcon className="ml-auto h-4 w-4 text-white opacity-50" />
+                            <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
                           </Button>
                         </FormControl>
                       </PopoverTrigger>
@@ -213,9 +229,9 @@ export function CreateForm() {
                           disabled={(date) =>
                             date < new Date() ||
                             date >
-                            new Date(
-                              new Date().setMonth(new Date().getMonth() + 1),
-                            )
+                              new Date(
+                                new Date().setMonth(new Date().getMonth() + 1),
+                              )
                           }
                           initialFocus
                         />
@@ -234,8 +250,15 @@ export function CreateForm() {
                 </Button>
               </DialogFooter>
             </form>
-          )}
-        </Form>
+          </Form>
+        )}
+        {resultUrl.length !== 0 && (
+          <DialogFooter className="items-center justify-center">
+            <Button variant="secondary" onClick={() => setresultUrl("")}>
+              Make a new Url
+            </Button>
+          </DialogFooter>
+        )}
       </DialogContent>
     </Dialog>
   );

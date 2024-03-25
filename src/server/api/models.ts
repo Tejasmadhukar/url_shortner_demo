@@ -26,7 +26,7 @@ export const create_tinyurl_model = z
     },
     {
       message:
-        "For notification on click to be enabled, you need to enable authentication on opening the url",
+        "For Notifications to be enabled, you need to enable Authentication",
 
       path: ["isNotificationRequired"],
     },
