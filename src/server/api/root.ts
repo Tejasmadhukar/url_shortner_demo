@@ -1,5 +1,5 @@
 import { TRPCError } from "@trpc/server";
-import { eq } from "drizzle-orm";
+import { inArray } from "drizzle-orm";
 import { z } from "zod";
 import { createTRPCRouter, protectedProcedure } from "~/server/api/trpc";
 import { urls } from "../db/schema";
@@ -24,15 +24,11 @@ export const appRouter = createTRPCRouter({
       });
     }
   }),
-  delete_tinyUrl: protectedProcedure
-    .input(
-      z.object({
-        urlId: z.string(),
-      }),
-    )
+  delete_tinyurls: protectedProcedure
+    .input(z.array(z.string()))
     .mutation(async ({ input, ctx }) => {
       try {
-        await ctx.db.delete(urls).where(eq(urls.id, input.urlId));
+        await ctx.db.delete(urls).where(inArray(urls.id, input));
       } catch (error) {
         throw new TRPCError({
           message: "database operation failed",
@@ -40,6 +36,16 @@ export const appRouter = createTRPCRouter({
         });
       }
     }),
+  delete_allurls: protectedProcedure.mutation(async ({ ctx }) => {
+    try {
+      await ctx.db.delete(urls);
+    } catch (error) {
+      throw new TRPCError({
+        message: "database operation failed",
+        code: "INTERNAL_SERVER_ERROR",
+      });
+    }
+  }),
   create_tinyurl: protectedProcedure
     .input(create_tinyurl_model)
     .mutation(async ({ input, ctx }) => {
