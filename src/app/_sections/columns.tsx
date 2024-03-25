@@ -35,10 +35,12 @@ export const columns: ColumnDef<UrlType>[] = [
     accessorKey: "tinyurl",
     header: () => <span className="font-bold dark:text-white">TinyUrl</span>,
     cell: ({ row }) => {
+      let base = getBaseUrl();
+      if (base == "") base = "https://url-shortner-demo.vercel.app";
       // eslint-disable-next-line
       const tinyurlhash = row.getValue("tinyurl") + "";
       // eslint-disable-next-line
-      const tinyurl = `${getBaseUrl()}/${tinyurlhash}`;
+      const tinyurl = `${base}/${tinyurlhash}`;
       return (
         <Link href={tinyurl} target="_blank">
           {tinyurlhash}

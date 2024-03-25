@@ -50,7 +50,9 @@ export function CreateForm() {
   async function onSubmit(data: z.infer<typeof FormSchema>) {
     setloading(true);
     const tinyurlid = await createUrlAction(data);
-    const tinyurl = `${getBaseUrl()}/${tinyurlid}`;
+    let base = getBaseUrl();
+    if (base == "") base = "https://url-shortner-demo.vercel.app";
+    const tinyurl = `${base}/${tinyurlid}`;
     setresultUrl(tinyurl);
     setloading(false);
   }

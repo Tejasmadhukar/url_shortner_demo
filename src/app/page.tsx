@@ -15,9 +15,15 @@ export default async function Home() {
         <ModeToggle />
       </div>
       <div className="container flex flex-col items-center justify-center gap-2 ">
-        <h1 className="mt-10 text-5xl font-extrabold tracking-tight sm:text-[4rem]">
-          URL <span className="text-">Shortner</span> Demo
-        </h1>
+        {session ? (
+          <h1 className="mt-10 text-5xl font-extrabold tracking-tight sm:text-[4rem]">
+            URL <span className="text-">Shortner</span> Demo
+          </h1>
+        ) : (
+          <h1 className="mt-64 text-5xl font-extrabold tracking-tight sm:text-[4rem]">
+            URL <span className="text-">Shortner</span> Demo
+          </h1>
+        )}
         <div className="flex flex-col items-center gap-1">
           <div className="flex flex-col items-center justify-center gap-4">
             <p className="mt-2 text-center text-2xl dark:text-white">
