@@ -3,6 +3,8 @@ import { type ColumnDef } from "@tanstack/react-table";
 import { type UrlType } from "~/server/db/schema";
 import { Checkbox } from "~/components/ui/checkbox";
 import { DataTableColumnHeader } from "./data-table-column-header";
+import Link from "next/link";
+import { getActualTinyBaseUrl } from "~/trpc/shared";
 
 export const columns: ColumnDef<UrlType>[] = [
   {
@@ -32,10 +34,26 @@ export const columns: ColumnDef<UrlType>[] = [
   {
     accessorKey: "tinyurl",
     header: () => <span className="font-bold text-white">TinyUrl</span>,
+    cell: ({ row }) => {
+      // eslint-disable-next-line
+      const tinyurlhash = row.getValue("tinyurl") + "";
+      // eslint-disable-next-line
+      const tinyurl = `${getActualTinyBaseUrl()}/${tinyurlhash}`;
+      return (
+        <Link href={tinyurl} target="_blank">
+          {tinyurlhash}
+        </Link>
+      );
+    },
   },
   {
     accessorKey: "forwardedTo",
     header: () => <span className="font-bold text-white">Actual Url</span>,
+    cell: ({ row }) => (
+      <Link href={row.getValue("forwardedTo")} target="_blank">
+        {row.getValue("forwardedTo")}
+      </Link>
+    ),
   },
 
   {
