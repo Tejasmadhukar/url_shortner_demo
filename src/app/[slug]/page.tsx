@@ -17,11 +17,16 @@ export default async function Redirect({
 
   if (!(new Date() < url.endTime && new Date() >= url.startTime))
     return (
-      <h1>
-        This url started at {url.startTime.toUTCString()} and ends at
-        {url.endTime.toUTCString()}. If you are seeing this message then url has
-        not started yet or has expired.
-      </h1>
+      <div className="flex flex-col items-center justify-center">
+        <h1>
+          This url starts on {url.startTime.toUTCString()} and ends on{" "}
+          {url.endTime.toUTCString()}.
+        </h1>
+        <h1>
+          If you are seeing this message then url has not started yet or has
+          expired.
+        </h1>
+      </div>
     );
 
   if (!url.isAuthRequired) return permanentRedirect(url.forwardedTo);
