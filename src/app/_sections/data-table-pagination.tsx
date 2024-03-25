@@ -5,6 +5,7 @@ import {
   DoubleArrowRightIcon,
 } from "@radix-ui/react-icons";
 import { type Table } from "@tanstack/react-table";
+import { useState } from "react";
 
 import { Button } from "~/components/ui/button";
 import {
@@ -14,6 +15,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "~/components/ui/select";
+import { DeleteAllTinyurls, DeleteTinyurls } from "./delete_action";
 
 interface DataTablePaginationProps<TData> {
   table: Table<TData>;
@@ -22,11 +24,47 @@ interface DataTablePaginationProps<TData> {
 export function DataTablePagination<TData>({
   table,
 }: DataTablePaginationProps<TData>) {
+  const [loading, setLoading] = useState(false);
+
+  async function DeleteAction() {
+    setLoading(true);
+
+    if (
+      table.getFilteredSelectedRowModel().rows.length ===
+      table.getFilteredRowModel().rows.length
+    ) {
+      await DeleteAllTinyurls();
+      setLoading(false);
+      return;
+    }
+
+    const urlIds: string[] = [];
+    const urlsToDelete = table.getFilteredSelectedRowModel().rows;
+    // @ts-expect-error accessing shit
+    urlsToDelete.forEach((val) => urlIds.push(val.original.id)); //eslint-disable-line
+    await DeleteTinyurls(urlIds);
+    setLoading(false);
+  }
+
   return (
-    <div className="flex items-center justify-between px-2">
+    <div className="mt-2 flex items-center justify-between px-2">
       <div className="flex-1 text-sm text-muted-foreground">
         {table.getFilteredSelectedRowModel().rows.length} of{" "}
         {table.getFilteredRowModel().rows.length} row(s) selected.
+        {table.getFilteredSelectedRowModel().rows.length !== 0 && (
+          <>
+            {loading && <p>Deleting data...</p>}
+            {!loading && (
+              <Button
+                variant="outline"
+                className="ml-2 border-red-600 text-red-600 hover:bg-red-500"
+                onClick={DeleteAction}
+              >
+                Delete Selected
+              </Button>
+            )}
+          </>
+        )}
       </div>
       <div className="flex items-center space-x-6 lg:space-x-8">
         <div className="flex items-center space-x-2">
