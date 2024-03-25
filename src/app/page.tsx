@@ -5,23 +5,27 @@ import { CreateForm } from "./_sections/create_modal";
 import { Suspense } from "react";
 import { DataTable } from "./_sections/data-table";
 import { columns } from "./_sections/columns";
+import { ModeToggle } from "./theme-switch";
 
 export default async function Home() {
   const session = await getServerAuthSession();
   return (
-    <main className="flex min-h-screen flex-col items-center bg-gradient-to-b from-slate-800 to-slate-950 text-white">
+    <main className="flex min-h-screen flex-col items-center bg-gradient-to-b dark:from-slate-800 dark:to-slate-950 dark:text-white">
+      <div className="absolute right-48 top-16">
+        <ModeToggle />
+      </div>
       <div className="container flex flex-col items-center justify-center gap-2 ">
         <h1 className="mt-10 text-5xl font-extrabold tracking-tight sm:text-[4rem]">
           URL <span className="text-">Shortner</span> Demo
         </h1>
         <div className="flex flex-col items-center gap-1">
           <div className="flex flex-col items-center justify-center gap-4">
-            <p className="mt-2 text-center text-2xl text-white">
+            <p className="mt-2 text-center text-2xl dark:text-white">
               {session && <span>Logged in as {session.user.email}</span>}
             </p>
             <Link
               href={session ? "/api/auth/signout" : "/api/auth/signin"}
-              className="mt-2 rounded-full bg-white/10 px-10 py-3 font-semibold no-underline transition hover:bg-white/20"
+              className="mt-2 rounded-full bg-black/10 px-10 py-3 font-semibold no-underline transition hover:bg-white/20 dark:bg-white/10 dark:hover:bg-black/20"
             >
               {session ? "Sign out" : "Sign in"}
             </Link>

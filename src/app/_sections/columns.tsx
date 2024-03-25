@@ -33,7 +33,7 @@ export const columns: ColumnDef<UrlType>[] = [
   },
   {
     accessorKey: "tinyurl",
-    header: () => <span className="font-bold text-white">TinyUrl</span>,
+    header: () => <span className="font-bold dark:text-white">TinyUrl</span>,
     cell: ({ row }) => {
       // eslint-disable-next-line
       const tinyurlhash = row.getValue("tinyurl") + "";
@@ -48,7 +48,7 @@ export const columns: ColumnDef<UrlType>[] = [
   },
   {
     accessorKey: "forwardedTo",
-    header: () => <span className="font-bold text-white">Actual Url</span>,
+    header: () => <span className="font-bold dark:text-white">Actual Url</span>,
     cell: ({ row }) => (
       <Link href={row.getValue("forwardedTo")} target="_blank">
         {row.getValue("forwardedTo")}
@@ -124,10 +124,14 @@ export const columns: ColumnDef<UrlType>[] = [
   },
   {
     accessorKey: "isAuthRequired",
-    header: () => <span className="font-bold text-white">Authentication</span>,
+    header: () => (
+      <span className="font-bold dark:text-white">Authentication</span>
+    ),
   },
   {
     accessorKey: "isNotificationRequired",
-    header: () => <span className="font-bold text-white">Notification</span>,
+    header: () => (
+      <span className="font-bold dark:text-white">Notification</span>
+    ),
   },
 ];

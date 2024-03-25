@@ -160,9 +160,11 @@ export function CreateForm() {
                             {field.value ? (
                               format(field.value, "PPP")
                             ) : (
-                              <span className="text-white">Pick a date</span>
+                              <span className="dark:text-white">
+                                Pick a date
+                              </span>
                             )}
-                            <CalendarIcon className="ml-auto h-4 w-4 text-white opacity-50" />
+                            <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
                           </Button>
                         </FormControl>
                       </PopoverTrigger>
@@ -211,9 +213,11 @@ export function CreateForm() {
                             {field.value ? (
                               format(field.value, "PPP")
                             ) : (
-                              <span className="text-white">Pick a date</span>
+                              <span className="dark:text-white">
+                                Pick a date
+                              </span>
                             )}
-                            <CalendarIcon className="ml-auto h-4 w-4 text-white opacity-50" />
+                            <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
                           </Button>
                         </FormControl>
                       </PopoverTrigger>
