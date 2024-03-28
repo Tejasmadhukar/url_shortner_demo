@@ -45,6 +45,7 @@ export const urls = createTable(
       .references(() => users.id, {
         onDelete: "cascade",
       }),
+    TimesClicked: integer("times_clicked").default(0).notNull(),
   },
   (table) => ({
     tinyurlIdx: uniqueIndex("tinyurl_idx").on(table.tinyurl),
