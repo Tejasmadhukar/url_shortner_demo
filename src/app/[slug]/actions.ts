@@ -6,6 +6,8 @@ import { env } from "~/env";
 import { render } from "@react-email/render";
 import UrlOnEmail from "emails/open_url";
 import NotificationEmail from "emails/notify_click";
+import { urls } from "~/server/db/schema";
+import { eq, sql } from "drizzle-orm";
 
 const transporter = createTransport({
   url: env.EMAIL_SERVER,
@@ -30,6 +32,11 @@ export async function EmailAuthRequiredAction(email: string, tinyurl: string) {
   });
 
   if (!creator) throw new Error("Stop breaking my app");
+
+  await db
+    .update(urls)
+    .set({ TimesClicked: sql`${urls.TimesClicked} + 1` })
+    .where(eq(urls.tinyurl, tinyurl));
 
   const UrlOnEmailHtml = render(
     UrlOnEmail({
