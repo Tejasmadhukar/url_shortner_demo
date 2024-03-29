@@ -1,6 +1,8 @@
 import { permanentRedirect } from "next/navigation";
 import { db } from "~/server/db";
 import { UrlOnMail } from "./authForm";
+import { urls } from "~/server/db/schema";
+import { sql, eq } from "drizzle-orm";
 
 export default async function Redirect({
   params,
@@ -29,7 +31,13 @@ export default async function Redirect({
       </div>
     );
 
-  if (!url.isAuthRequired) return permanentRedirect(url.forwardedTo);
+  if (!url.isAuthRequired) {
+    await db
+      .update(urls)
+      .set({ TimesClicked: sql`${urls.TimesClicked} + 1` })
+      .where(eq(urls.tinyurl, tinyurl));
+    return permanentRedirect(url.forwardedTo);
+  }
 
   return <UrlOnMail tinyurl={tinyurl} />;
 }

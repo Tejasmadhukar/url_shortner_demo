@@ -28,6 +28,7 @@ import { Button } from "~/components/ui/button";
 import { useState } from "react";
 import { Input } from "~/components/ui/input";
 import { DataTablePagination } from "./data-table-pagination";
+import Metrics from "./metrics-graph";
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];
   data: TData[];
@@ -147,6 +148,9 @@ export function DataTable<TData, TValue>({
         </Table>
       </div>
       <DataTablePagination table={table} />
+      <div className="mt-28">
+        <Metrics table={table} />
+      </div>
     </div>
   );
 }

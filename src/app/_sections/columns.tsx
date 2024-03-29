@@ -57,7 +57,12 @@ export const columns: ColumnDef<UrlType>[] = [
       </Link>
     ),
   },
-
+  {
+    accessorKey: "TimesClicked",
+    header: ({ column }) => (
+      <DataTableColumnHeader column={column} title="Click Impressions" />
+    ),
+  },
   {
     accessorKey: "startTime",
     header: ({ column }) => (
