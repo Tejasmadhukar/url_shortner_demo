@@ -6,6 +6,7 @@ import {
 } from "next-auth";
 import { type Adapter } from "next-auth/adapters";
 import EmailProvider from "next-auth/providers/email";
+import GoogleProvider from "next-auth/providers/google";
 import { env } from "~/env";
 import { db } from "~/server/db";
 import { createTable } from "~/server/db/schema";
@@ -51,6 +52,10 @@ export const authOptions: NextAuthOptions = {
     EmailProvider({
       server: env.EMAIL_SERVER,
       from: env.EMAIL_FROM,
+    }),
+    GoogleProvider({
+      clientId: env.GOOGLE_CLIENT_ID,
+      clientSecret: env.GOOGLE_CLIENT_SECRET,
     }),
     /**
      * ...add more providers here.
