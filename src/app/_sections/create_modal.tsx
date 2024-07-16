@@ -60,7 +60,7 @@ export function CreateForm() {
   return (
     <Dialog>
       <DialogTrigger asChild>
-        <Button variant="secondary">Create Url</Button>
+        <button className="border-2 border-green-500 rounded-full bg-black/10 px-4 py-2 text-sm font-semibold no-underline transition hover:bg-white/20 dark:bg-white/10 dark:hover:bg-black/20"> Create Url</button>
       </DialogTrigger>
       <DialogContent className=" m:max-w-[425px]">
         <DialogHeader>

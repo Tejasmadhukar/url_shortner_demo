@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { cn } from "~/lib/utils";
 import { getServerAuthSession } from "~/server/auth";
 import { api } from "~/trpc/server";
 import { CreateForm } from "./_sections/create_modal";
@@ -6,41 +7,69 @@ import { Suspense } from "react";
 import { DataTable } from "./_sections/data-table";
 import { columns } from "./_sections/columns";
 import { ModeToggle } from "./theme-switch";
+import { Spotlight } from "~/components/Spotlight";
 
 export default async function Home() {
   const session = await getServerAuthSession();
   return (
-    <main className="flex min-h-screen flex-col items-center bg-gradient-to-b dark:from-slate-800 dark:to-slate-950 dark:text-white">
-      <div className="absolute right-48 top-16">
-        <ModeToggle />
-      </div>
-      <div className="container flex flex-col items-center justify-center gap-2 ">
-        {session ? (
-          <h1 className="mt-10 text-5xl font-extrabold tracking-tight sm:text-[4rem]">
-            URL <span className="text-">Shortner</span> Demo
-          </h1>
-        ) : (
-          <h1 className="mt-64 text-5xl font-extrabold tracking-tight sm:text-[4rem]">
-            URL <span className="text-">Shortner</span> Demo
-          </h1>
-        )}
-        <div className="flex flex-col items-center gap-1">
-          <div className="flex flex-col items-center justify-center gap-4">
-            <p className="mt-2 text-center text-2xl dark:text-white">
-              {session && <span>Logged in as {session.user.email}</span>}
+    <main className="relative flex min-h-screen flex-col items-center justify-center bg-gradient-to-b from-slate-200 to-slate-150 text-black dark:from-slate-800 dark:to-slate-950 dark:text-white">
+      <div className="absolute inset-0 z-0 bg-no-repeat bg-center bg-cover opacity-20" style={{ backgroundImage: "url('/grid-background.png')" }}></div>
+      {!session && (
+        <div className="absolute top-24 right-24">
+          <ModeToggle />
+        </div>
+      )}
+      <div className={`container flex flex-col items-center justify-center gap-2 z-10 ${!session ? 'rounded-xl py-12 border bg-white bg-opacity-5 w-full max-w-3xl' : 'w-full max-w-full px-4'}`}>
+        {!session ? (
+          <>
+            <h1 className="p-12 text-2xl font-extrabold tracking-tight sm:text-[4rem] text-center">
+              URL <span className="text-">Shortner</span> Demo
+            </h1>
+            <p className="pb-2 text-center text-xl dark:text-white">
+              Welcome to the URL Shortner Demo. Please sign in to manage your URLs.
             </p>
             <Link
               href={session ? "/api/auth/signout" : "/api/auth/signin"}
-              className="mt-2 rounded-full bg-black/10 px-10 py-3 font-semibold no-underline transition hover:bg-white/20 dark:bg-white/10 dark:hover:bg-black/20"
+              className="border-2 border-blue-500 rounded-full bg-black/10 px-4 py-2 font-semibold no-underline transition hover:bg-white/20 dark:bg-white/10 dark:hover:bg-black/20"
             >
               {session ? "Sign out" : "Sign in"}
             </Link>
+          </>
+        ) : (
+          <div className="container flex justify-between items-center w-full p-4">
+            <div className="flex space-x-4">
+              <h1 className="text-xl font-extrabold tracking-tight sm:text-2xl">
+                URL <span className="text-">Shortner</span> Demo
+              </h1>
+              <ModeToggle />
+            </div>
+            <div className="flex items-center space-x-4">
+              <p className="text-center text-xl dark:text-white">
+                Logged in as {session.user.email}
+              </p>
+              <Link
+                href={session ? "/api/auth/signout" : "/api/auth/signin"}
+                className="border-2 border-blue-500 rounded-full bg-black/10 px-4 py-2 font-semibold no-underline transition hover:bg-white/20 dark:bg-white/10 dark:hover:bg-black/20"
+              >
+                {session ? "Sign out" : "Sign in"}
+              </Link>
+            </div>
           </div>
+        )}
+        <div className="container flex flex-col items-center gap-1 w-full">
+          {session && (
+            <div className="flex flex-col items-center justify-center gap-4 w-full">
+              <Suspense fallback={<p>Loading your urls....</p>}>
+                <ShowAllUrls />
+              </Suspense>
+            </div>
+          )}
         </div>
-        <Suspense fallback={<p>Loading your urls....</p>}>
-          <ShowAllUrls />
-        </Suspense>
       </div>
+      <Spotlight
+        className="-top-40 left-0 md:left-60 md:-top-20 z-20"
+        fill="white"
+      />
     </main>
   );
 }
