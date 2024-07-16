@@ -8,6 +8,7 @@ import { DataTable } from "./_sections/data-table";
 import { columns } from "./_sections/columns";
 import { ModeToggle } from "./theme-switch";
 import { Spotlight } from "~/components/Spotlight";
+import { IoIosLink } from "react-icons/io"; 
 
 export default async function Home() {
   const session = await getServerAuthSession();
@@ -83,11 +84,14 @@ async function ShowAllUrls() {
   return (
     <div className="hidden h-full w-full flex-1 flex-col space-y-8 p-8 px-4 md:flex">
       <div className="flex items-center justify-between space-y-2">
-        <div>
-          <h2 className="text-2xl font-bold tracking-tight">Urls</h2>
-          <p className="text-muted-foreground">
-            These are all the urls that you have.
-          </p>
+        <div className="flex items-center">
+          <IoIosLink className="w-16 h-16 text-blue-500 p-2 border-4  rounded-lg" />
+          <div className="pl-2">
+            <h2 className="text-2xl font-bold tracking-tight">Urls</h2>
+            <p className="text-muted-foreground">
+              These are all the urls that you have.
+            </p>
+          </div>
         </div>
         <div className="flex items-center space-x-2">
           <CreateForm />
@@ -97,3 +101,5 @@ async function ShowAllUrls() {
     </div>
   );
 }
+
+
