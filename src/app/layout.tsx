@@ -1,3 +1,4 @@
+import { Analytics } from "@vercel/analytics/next";
 import "~/styles/globals.css";
 import { Inter } from "next/font/google";
 import { TRPCReactProvider } from "~/trpc/react";
@@ -30,6 +31,7 @@ export default function RootLayout({
             disableTransitionOnChange
           >
             {children}
+            <Analytics />
           </ThemeProvider>
         </TRPCReactProvider>
       </body>
